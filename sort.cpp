@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 // using namespace std;
 
 // 冒泡排序
@@ -56,6 +57,17 @@ void InsertSort(std::vector<int> &nums){
 
 // 希尔排序
 // Tavg = O(nlogn) Tbest = O(nlog^2n) Twrost = O(nlog^2n) S = O(1) In-sapce 不稳定
+void ShellSort(std::vector<int> &nums) {
+    int n = nums.size();
+    for(int gap = n / 2; gap > 0; gap /= 2) {
+        for(int i = gap; i < n; ++ i) {
+            for(int j = i; j - gap >= 0 && nums[j - gap] > nums[j]; j -= gap) {
+                std::swap(nums[j - gap], nums[j]);
+            }
+        }
+    }
+}
+
 
 // 归并数组
 void Merge(std::vector<int> &nums, int l, int m, int r) {
@@ -140,10 +152,51 @@ void HeapSort(std::vector<int> &nums) {
 
 // 计数排序
 // Tavg = O(n+k) Tbest = O(n+k) Twrost = O(n+k) S = O(k) Out-sapce 稳定
+void CountSort(std::vector<int> &nums) {
+    if(nums.empty()) return ;
+    int low = *std::min_element(nums.begin(), nums.end());
+    int high = *std::max_element(nums.begin(), nums.end());
+    int n = high - low + 1;
+    std::vector<int> cnt(n);
+    for(auto x : nums){
+        cnt[x - low] ++;
+    }
+    for(int i = 0, pos = 0; i < n; ++ i){
+        for(int j = 0; j < cnt[i]; ++ j){
+            nums[pos ++] = i + low; 
+        }
+    }
+}
+
+
 // 桶排序
 // Tavg = O(n+k) Tbest = O(n+k) Twrost = O(n^2) S = O(n+k) Out-sapce 稳定
+void BucketSort(std::vector<int> &nums) {    
+    // 桶长度50
+    const int bucket_size = 50;
+    int n = nums.size();
+    int low = *std::min_element(nums.begin(), nums.end());
+    int high = *std::max_element(nums.begin(), nums.end());
+    int cnt = (high - low) / bucket_size + 1;
+    std::vector<int> buckets[cnt];
+    for(auto num : nums){
+        buckets[(num - low) / bucket_size].push_back(num);
+    }
+    for(auto &bucket : buckets) {
+        QuickSort(bucket, 0, bucket.size());
+    }
+    for(int i = 0, k = 0; k < n; ++ i){
+        for(int j = 0; j < buckets[i].size(); ++ j){
+            nums[k ++] = buckets[i][j];
+        }
+    }
+}
+
+
 // 基数排序
 // Tavg = O(nxk) Tbest = O(nxk) Twrost = O(nxk) S = O(nxk) Out-sapce 稳定
+
+
 
 void Print(std::vector<int> &nums) {
     for(auto num : nums) {
@@ -160,7 +213,10 @@ int main(){
     // SelectSort(a);
     // QuickSort(a, 0, a.size());
     // MergeSort(a, 0, a.size() - 1);
-    HeapSort(a);
+    // HeapSort(a);
+    // BucketSort(a);
+    // CountSort(a);
+    ShellSort(a);
     Print(a);
     return 0;
 }
