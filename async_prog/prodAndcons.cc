@@ -2,7 +2,7 @@
  * @Author: Ryu-59073
  * @Date: 2022-07-22 08:55:44
  * @LastEditors: Ryu-59073
- * @LastEditTime: 2022-07-23 00:52:32
+ * @LastEditTime: 2022-07-23 00:55:47
  * @FilePath: /Cpp_code/async_prog/prodAndcons.cc
  * @Description: 
  * 
@@ -19,7 +19,7 @@
 #include <unistd.h>
 
 int main(int argc, char const *argv[]) {
-    std::mutex write_mtx, prod_mtx, cons_mtx;
+    std::mutex write_mtx, mtx;
     std::condition_variable not_empty, not_full;
     int prod_num = 10;
     int cons_num = 5;
@@ -38,17 +38,14 @@ int main(int argc, char const *argv[]) {
             std::cout << "producer(" << id << ") come in\n";
         }
         while(1) {
-            std::unique_lock<std::mutex> lock(prod_mtx);
+            std::unique_lock<std::mutex> lock(mtx);
             not_full.wait(lock, [&q, &capacity]{
                 return q.size() < capacity;
             });
 
             auto data = new node(id);
             q.push(data);
-            {
-                std::lock_guard<std::mutex> lock(write_mtx);
-                std::cout <<  "producer(" << id << ") produce data " << data->data  << " queue length = " << q.size() << "\n";
-            }
+            std::cout <<  "producer(" << id << ") produce data " << data->data  << " queue length = " << q.size() << "\n";
             lock.unlock();
             not_empty.notify_all();
             sleep(4);
@@ -61,18 +58,14 @@ int main(int argc, char const *argv[]) {
             std::cout << "consumer(" << id << ") come in\n";
         }
         while(1) {
-            std::unique_lock<std::mutex> lock(cons_mtx);
+            std::unique_lock<std::mutex> lock(mtx);
             not_empty.wait(lock, [&q]{
                 return q.empty() == false;
             });
 
             auto data = q.front();
             q.pop();
-            {
-                std::lock_guard<std::mutex> lock(write_mtx);
-                std::cout <<  "consumer(" << id << ") get data " << data->data << " from producer(" << data->prod_id <<")\n";
-            }
-
+            std::cout <<  "consumer(" << id << ") get data " << data->data << " from producer(" << data->prod_id <<")\n";
             lock.unlock();
             not_full.notify_all();
             sleep(2);
