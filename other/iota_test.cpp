@@ -1,3 +1,13 @@
+/*
+ * @Author: Ryu-59073
+ * @Date: 2022-06-12 08:00:19
+ * @LastEditors: Ryu-59073
+ * @LastEditTime: 2022-07-26 08:31:12
+ * @FilePath: /Cpp_code/other/iota_test.cpp
+ * @Description: 
+ * 
+ * Copyright (c) 2022 by Ryu-59073, All Rights Reserved. 
+ */
 #include <iostream>
 #include <numeric>
 #include <vector>
@@ -9,6 +19,5 @@ int main(){
     cout << "Size = " << ve.size() << endl;
     iota(ve.begin(), ve.end(), 0);
     cout << "Size = " << ve.size() << endl;
-    EXPECT
     return 0;
 }

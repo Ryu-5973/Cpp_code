@@ -1,12 +1,6 @@
 *
 
-!/async_prog/
-!/hplsp/
-!/ipc/
-!/lab4_pcap_labnet/
-!/network_prog/
-!/other/
-!/unp_review/
+!/**/
 
 
 !*.cpp
